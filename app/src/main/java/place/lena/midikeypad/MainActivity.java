@@ -3,6 +3,7 @@ package place.lena.midikeypad;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
@@ -25,24 +26,21 @@ public class MainActivity extends AppCompatActivity {
         showMeButton.setOnClickListener(showMeOnClickListener);
     }
 
-    View.OnClickListener startOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
-                Toast.makeText(getApplicationContext(), "Unfortunately your device does not support MIDI.", Toast.LENGTH_LONG).show();
-            }
-            MidiManager m = (MidiManager)getApplicationContext().getSystemService(Context.MIDI_SERVICE);
-            MidiDeviceInfo[] infos = m.getDevices();
-            if (infos.length == 0) {
-                Toast.makeText(getApplicationContext(), "No connected devices found.", Toast.LENGTH_LONG).show();
-            }
+    View.OnClickListener startOnClickListener = v -> {
+        if (!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
+            Toast.makeText(getApplicationContext(), "Unfortunately your device does not support MIDI.", Toast.LENGTH_LONG).show();
         }
+        MidiManager m = (MidiManager)getApplicationContext().getSystemService(Context.MIDI_SERVICE);
+        MidiDeviceInfo[] infos = m.getDevices();
+        if (infos.length == 0) {
+            Toast.makeText(getApplicationContext(), "No connected devices found.", Toast.LENGTH_LONG).show();
+        }
+
+        Intent intent = new Intent(getApplicationContext(), KeypadActivity.class);
+        startActivity(intent);
     };
 
-    View.OnClickListener showMeOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-        }
+    View.OnClickListener showMeOnClickListener = v -> {
+        Toast.makeText(getApplicationContext(), "Not implemented yet.", Toast.LENGTH_LONG).show();
     };
 }
