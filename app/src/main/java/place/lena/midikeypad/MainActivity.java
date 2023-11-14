@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,12 +42,13 @@ public class MainActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mode_spinner.setAdapter(adapter);
         mode_spinner.setSelection(0);
+        if (!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
+            TextView text = findViewById(R.id.connect_device_text);
+            text.setText(R.string.midi_unsupported_text);
+        }
     }
 
     View.OnClickListener startOnClickListener = v -> {
-        if (!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
-            Toast.makeText(getApplicationContext(), "Unfortunately your device does not support MIDI.", Toast.LENGTH_LONG).show();
-        }
         MidiManager m = (MidiManager)getApplicationContext().getSystemService(Context.MIDI_SERVICE);
         MidiDeviceInfo[] infos = m.getDevices();
         if (infos.length == 0) {
