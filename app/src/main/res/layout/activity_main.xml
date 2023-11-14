@@ -56,6 +56,7 @@
             android:layout_height="28dp"
             android:layout_marginTop="20dp"
             android:layout_gravity="center_horizontal"
+            android:checked="true"
             android:text="@string/landscape_checkbox_text" />
 
         <TextView

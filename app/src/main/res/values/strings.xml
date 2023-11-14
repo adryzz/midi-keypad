@@ -16,6 +16,5 @@
     <string name="select_midi_device_text">Select MIDI device</string>
     <string name="landscape_checkbox_text">Landscape</string>
     <string name="midi_no_devices">No MIDI devices found.</string>
-    <string name="midi_auto_device_text">Auto</string>
     <string name="no_devices_cant_start_text">Cannot start, as there are no MIDI devices.</string>
 </resources>

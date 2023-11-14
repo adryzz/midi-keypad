@@ -50,28 +50,36 @@ public class MainActivity extends AppCompatActivity {
 
         // if MIDI is supported, fill up the spinner, otherwise hide everything and change the text
         if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
-            String[] data;
+
             MidiManager m = (MidiManager)getApplicationContext().getSystemService(Context.MIDI_SERVICE);
             MidiDeviceInfo[] infos = m.getDevices();
 
             if (infos.length == 0) {
                 device_spinner.setEnabled(false);
-                data = new String[]{getString(R.string.midi_no_devices)};
+                String[] data = new String[]{getString(R.string.midi_no_devices)};
+
+                ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, data);
+                adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                device_spinner.setAdapter(adapter1);
             } else {
-                data = new String[infos.length+1];
                 device_spinner.setEnabled(true);
-                data[0] = getString(R.string.midi_auto_device_text);
+                MidiDeviceSpinnerInfo[] spinfos = new MidiDeviceSpinnerInfo[infos.length];
+                int def = 0;
                 for (int i = 0; i < infos.length; i++) {
                     MidiDeviceInfo info = infos[i];
-                    //String manufacturer = info.getProperties().getString("manufacturer");
-                    //String product = info.getProperties().getString("product");
-                    String name = info.getProperties().getString("name");
-                    data[i+1] = name;
+                    String manufacturer = info.getProperties().getString("manufacturer");
+
+                    if (manufacturer.equals("Android")) {
+                        def = i;
+                    }
+                    spinfos[i] = new MidiDeviceSpinnerInfo(info);
                 }
+
+                ArrayAdapter<MidiDeviceSpinnerInfo> adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinfos);
+                adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                device_spinner.setAdapter(adapter1);
+                device_spinner.setSelection(def);
             }
-            ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, data);
-            adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            device_spinner.setAdapter(adapter1);
 
         } else {
             TextView text = findViewById(R.id.connect_device_text);
@@ -95,4 +103,18 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener showMeOnClickListener = v -> {
         Toast.makeText(getApplicationContext(), "Not implemented yet.", Toast.LENGTH_LONG).show();
     };
+}
+
+class MidiDeviceSpinnerInfo {
+    MidiDeviceInfo inner;
+    String name;
+    public MidiDeviceSpinnerInfo(MidiDeviceInfo info) {
+        this.inner = info;
+        this.name = info.getProperties().getString("name");
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
