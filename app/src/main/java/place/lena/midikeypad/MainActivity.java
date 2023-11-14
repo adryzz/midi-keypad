@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     Button startButton;
     Button showMeButton;
     Spinner mode_spinner;
-
     Spinner device_spinner;
     CheckBox landscapeCheckBox;
     @Override
@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         if (!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
             TextView text = findViewById(R.id.connect_device_text);
             text.setText(R.string.midi_unsupported_text);
+            LinearLayout layout = findViewById(R.id.main_layout);
+            layout.setVisibility(View.GONE);
         }
     }
 
