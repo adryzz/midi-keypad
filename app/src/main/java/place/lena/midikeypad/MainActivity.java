@@ -9,21 +9,38 @@ import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    Button startButton;
+    Button showMeButton;
+    Spinner mode_spinner;
 
+    Spinner device_spinner;
+    CheckBox landscapeCheckBox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Button startButton = findViewById(R.id.start_button);
-        final Button showMeButton = findViewById(R.id.show_me_button);
+        startButton = findViewById(R.id.start_button);
+        showMeButton = findViewById(R.id.show_me_button);
+        mode_spinner = findViewById(R.id.mode_spinner);
+        device_spinner = findViewById(R.id.device_spinner);
+        landscapeCheckBox = findViewById(R.id.landscape_checkbox);
 
         startButton.setOnClickListener(startOnClickListener);
         showMeButton.setOnClickListener(showMeOnClickListener);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.modes, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mode_spinner.setAdapter(adapter);
+        mode_spinner.setSelection(0);
     }
 
     View.OnClickListener startOnClickListener = v -> {
@@ -37,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent(getApplicationContext(), KeypadActivity.class);
+        intent.putExtra("mode", mode_spinner.getSelectedItemPosition());
+        intent.putExtra("orientation", landscapeCheckBox.isChecked());
         startActivity(intent);
     };
 

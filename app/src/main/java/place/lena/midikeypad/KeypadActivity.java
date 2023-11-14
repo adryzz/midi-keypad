@@ -6,6 +6,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiInputPort;
@@ -51,6 +52,9 @@ public class KeypadActivity extends AppCompatActivity {
             }
             case 1: {
                 return mode1(v, event);
+            }
+            case 2: {
+                return mode2(v, event);
             }
         }
 
@@ -104,6 +108,30 @@ public class KeypadActivity extends AppCompatActivity {
         return true;
     }
 
+    boolean mode2(View v, MotionEvent event) {
+
+        float x = event.getX(event.getActionIndex());
+        float width = v.getWidth();
+        int code = 60;
+        if (x > (width / 4) && x < (width / 2)) {
+            code = 61;
+        } else if (x > (width / 2) && x < ((width / 2) + (width / 4))) {
+            code = 62;
+        } else if (x > ((width / 2) + (width / 4))) {
+            code = 63;
+        }
+
+        int a = event.getActionMasked();
+        if (a == MotionEvent.ACTION_DOWN || a == MotionEvent.ACTION_POINTER_DOWN) {
+            sendNote(true, code);
+        } else if (a == MotionEvent.ACTION_UP || a == MotionEvent.ACTION_POINTER_UP) {
+            sendNote(false, code);
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     void sendNote(boolean on, int code) {
         byte[] buffer = new byte[32];
         int numBytes = 0;
@@ -126,6 +154,7 @@ public class KeypadActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +170,11 @@ public class KeypadActivity extends AppCompatActivity {
         binding.fullscreenContent.setOnTouchListener(touchListener);
 
         mode = getIntent().getIntExtra("mode", 0);
-        binding.fullscreenContent.setText("Mode " + mode);
+
+        if (getIntent().getBooleanExtra("orientation", false)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+        binding.fullscreenContent.setText(getString(R.string.mode_text) + mode);
 
         MidiManager m = (MidiManager)getApplicationContext().getSystemService(Context.MIDI_SERVICE);
         MidiDeviceInfo[] infos = m.getDevices();
@@ -152,6 +185,10 @@ public class KeypadActivity extends AppCompatActivity {
 
         for (int i = 0; i < infos.length; i++) {
             MidiDeviceInfo info = infos[i];
+            Log.i("cock", info.getProperties().getString("manufacturer"));
+            if (!(info.getProperties().getString("manufacturer").equals("Android"))) {
+                continue;
+            }
             MidiDeviceInfo.PortInfo[] portInfos = info.getPorts();
             for (int j = 0; j < portInfos.length; j++) {
                 String portName = portInfos[j].getName();
