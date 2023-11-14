@@ -71,6 +71,7 @@
             android:layout_width="355dp"
             android:layout_height="35dp"
             android:layout_gravity="center_horizontal"
+            android:prompt="@string/midi_no_devices"
             android:layout_marginTop="36dp" />
 
         <Button

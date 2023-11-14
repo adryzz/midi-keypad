@@ -42,7 +42,38 @@ public class MainActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mode_spinner.setAdapter(adapter);
         mode_spinner.setSelection(0);
-        if (!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // if MIDI is supported, fill up the spinner, otherwise hide everything and change the text
+        if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
+            String[] data;
+            MidiManager m = (MidiManager)getApplicationContext().getSystemService(Context.MIDI_SERVICE);
+            MidiDeviceInfo[] infos = m.getDevices();
+
+            if (infos.length == 0) {
+                device_spinner.setEnabled(false);
+                data = new String[]{getString(R.string.midi_no_devices)};
+            } else {
+                data = new String[infos.length+1];
+                device_spinner.setEnabled(true);
+                data[0] = getString(R.string.midi_auto_device_text);
+                for (int i = 0; i < infos.length; i++) {
+                    MidiDeviceInfo info = infos[i];
+                    //String manufacturer = info.getProperties().getString("manufacturer");
+                    //String product = info.getProperties().getString("product");
+                    String name = info.getProperties().getString("name");
+                    data[i+1] = name;
+                }
+            }
+            ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, data);
+            adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            device_spinner.setAdapter(adapter1);
+
+        } else {
             TextView text = findViewById(R.id.connect_device_text);
             text.setText(R.string.midi_unsupported_text);
             LinearLayout layout = findViewById(R.id.main_layout);
@@ -51,12 +82,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     View.OnClickListener startOnClickListener = v -> {
-        MidiManager m = (MidiManager)getApplicationContext().getSystemService(Context.MIDI_SERVICE);
-        MidiDeviceInfo[] infos = m.getDevices();
-        if (infos.length == 0) {
-            Toast.makeText(getApplicationContext(), "No connected devices found.", Toast.LENGTH_LONG).show();
+        if (!device_spinner.isEnabled()) {
+            Toast.makeText(getApplicationContext(), getText(R.string.no_devices_cant_start_text), Toast.LENGTH_LONG).show();
+            return;
         }
-
         Intent intent = new Intent(getApplicationContext(), KeypadActivity.class);
         intent.putExtra("mode", mode_spinner.getSelectedItemPosition());
         intent.putExtra("orientation", landscapeCheckBox.isChecked());
