@@ -94,9 +94,17 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), getText(R.string.no_devices_cant_start_text), Toast.LENGTH_LONG).show();
             return;
         }
+
+        MidiDeviceSpinnerInfo selected = (MidiDeviceSpinnerInfo)device_spinner.getSelectedItem();
+        if (selected == null) {
+            Toast.makeText(getApplicationContext(), getText(R.string.device_null_error_text), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Intent intent = new Intent(getApplicationContext(), KeypadActivity.class);
         intent.putExtra("mode", mode_spinner.getSelectedItemPosition());
         intent.putExtra("orientation", landscapeCheckBox.isChecked());
+        intent.putExtra("device", selected.getInner());
         startActivity(intent);
     };
 
@@ -111,6 +119,10 @@ class MidiDeviceSpinnerInfo {
     public MidiDeviceSpinnerInfo(MidiDeviceInfo info) {
         this.inner = info;
         this.name = info.getProperties().getString("name");
+    }
+
+    public MidiDeviceInfo getInner() {
+        return inner;
     }
 
     @Override

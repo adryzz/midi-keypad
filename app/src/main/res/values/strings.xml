@@ -17,4 +17,5 @@
     <string name="landscape_checkbox_text">Landscape</string>
     <string name="midi_no_devices">No MIDI devices found.</string>
     <string name="no_devices_cant_start_text">Cannot start, as there are no MIDI devices.</string>
+    <string name="device_null_error_text">Error with the selected device.</string>
 </resources>

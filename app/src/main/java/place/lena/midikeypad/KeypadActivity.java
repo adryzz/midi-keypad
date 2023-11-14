@@ -177,34 +177,23 @@ public class KeypadActivity extends AppCompatActivity {
         binding.fullscreenContent.setText(getString(R.string.mode_text) + mode);
 
         MidiManager m = (MidiManager)getApplicationContext().getSystemService(Context.MIDI_SERVICE);
-        MidiDeviceInfo[] infos = m.getDevices();
-        if (infos.length == 0) {
-            Toast.makeText(getApplicationContext(), "No connected devices found.", Toast.LENGTH_LONG).show();
-            finish();
-        }
 
-        for (int i = 0; i < infos.length; i++) {
-            MidiDeviceInfo info = infos[i];
-            Log.i("cock", info.getProperties().getString("manufacturer"));
-            if (!(info.getProperties().getString("manufacturer").equals("Android"))) {
-                continue;
-            }
-            MidiDeviceInfo.PortInfo[] portInfos = info.getPorts();
-            for (int j = 0; j < portInfos.length; j++) {
-                String portName = portInfos[j].getName();
-                if (portInfos[j].getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
-                    int finalJ = j;
-                    m.openDevice(info, dev -> {
-                        if (dev == null) {
-                            Toast.makeText(getApplicationContext(), "Could not open device " + portName, Toast.LENGTH_LONG).show();
-                            finish();
-                        } else {
-                            port = dev.openInputPort(finalJ);
-                            device = dev;
-                        }
-                    }, new Handler(Looper.getMainLooper()));
-                    return;
-                }
+        MidiDeviceInfo info = getIntent().getParcelableExtra("device");
+
+        MidiDeviceInfo.PortInfo[] portInfos = info.getPorts();
+        for (int j = 0; j < portInfos.length; j++) {
+            String portName = portInfos[j].getName();
+            if (portInfos[j].getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
+                int finalJ = j;
+                m.openDevice(info, dev -> {
+                    if (dev == null) {
+                        Toast.makeText(getApplicationContext(), "Could not open device " + portName, Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        port = dev.openInputPort(finalJ);
+                        device = dev;
+                    }}, new Handler(Looper.getMainLooper()));
+                return;
             }
         }
     }
