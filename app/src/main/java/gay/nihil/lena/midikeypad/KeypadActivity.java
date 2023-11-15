@@ -1,4 +1,4 @@
-package place.lena.midikeypad;
+package gay.nihil.lena.midikeypad;
 
 import android.annotation.SuppressLint;
 
@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import place.lena.midikeypad.databinding.ActivityKeypadBinding;
+import gay.nihil.lena.midikeypad.databinding.ActivityKeypadBinding;
 
 public class KeypadActivity extends AppCompatActivity {
     private ActivityKeypadBinding binding;

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'place.lena.midikeypad'
+    namespace 'gay.nihil.lena.midikeypad'
     compileSdk 33
 
     defaultConfig {
-        applicationId "place.lena.midikeypad"
+        applicationId "gay.nihil.lena.midikeypad"
         minSdk 29
         targetSdk 33
         versionCode 1

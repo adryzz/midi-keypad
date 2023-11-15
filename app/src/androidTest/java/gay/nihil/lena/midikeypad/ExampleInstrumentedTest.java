@@ -1,4 +1,4 @@
-package place.lena.midikeypad;
+package gay.nihil.lena.midikeypad;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("place.lena.midikeypad", appContext.getPackageName());
+        assertEquals("gay.nihil.lena.midikeypad", appContext.getPackageName());
     }
 }

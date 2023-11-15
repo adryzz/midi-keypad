@@ -1,4 +1,4 @@
-package place.lena.midikeypad;
+package gay.nihil.lena.midikeypad;
 
 import androidx.appcompat.app.AppCompatActivity;
 
