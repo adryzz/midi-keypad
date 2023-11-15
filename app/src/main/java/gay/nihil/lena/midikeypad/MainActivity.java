@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     View.OnClickListener showMeOnClickListener = v -> {
-        Toast.makeText(getApplicationContext(), "Not implemented yet.", Toast.LENGTH_LONG).show();
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/adryzz/midi-keypad/wiki/Enabling-USB-MIDI")));
     };
 }
 
