@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.Drawable;
 import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiInputPort;
@@ -174,9 +176,22 @@ public class KeypadActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("orientation", false)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
-        binding.fullscreenContent.setText(getString(R.string.mode_text) + mode);
 
-        MidiManager m = (MidiManager)getApplicationContext().getSystemService(Context.MIDI_SERVICE);
+        Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.mode1);
+        switch (mode) {
+            case 0:
+                drawable = AppCompatResources.getDrawable(this, R.drawable.mode0);
+                break;
+            case 1:
+                drawable = AppCompatResources.getDrawable(this, R.drawable.mode1);
+                break;
+            case 2:
+                drawable = AppCompatResources.getDrawable(this, R.drawable.mode2);
+                break;
+        }
+        binding.fullscreenContent.setImageDrawable(drawable);
+
+        MidiManager m = (MidiManager)this.getSystemService(Context.MIDI_SERVICE);
 
         MidiDeviceInfo info = getIntent().getParcelableExtra("device");
 
