@@ -34,12 +34,9 @@ public class KeypadActivity extends AppCompatActivity {
 
     MidiDevice device;
 
-    int mode = 0;
+    KeypadHandler handler;
 
-    long lastEventTime = 0;
-    boolean lastKey = false;
-    boolean key0 = false;
-    boolean key1 = false;
+    int mode = 0;
 
     @SuppressLint("ClickableViewAccessibility")
     View.OnTouchListener touchListener = (v, event) -> {
@@ -48,91 +45,19 @@ public class KeypadActivity extends AppCompatActivity {
         }
         Log.i("a", "" + event.getEventTime());
 
-        switch (mode) {
-            case 0: {
-                return mode0(v, event);
-            }
-            case 1: {
-                return mode1(v, event);
-            }
-            case 2: {
-                return mode2(v, event);
-            }
+        if (handler == null) {
+            return false;
+        }
+
+        KeypadData data = handler.HandleMotionEvent(event);
+
+        if (data != null && data.handled) {
+            sendNote(data.on, data.code);
+            return true;
         }
 
         return false;
     };
-
-    boolean mode1(View v, MotionEvent event) {
-        if (event.getEventTime() - lastEventTime < 200) {
-            lastKey = !lastKey;
-        }
-        int code = 60;
-
-        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            if (lastKey) {
-                code = 61;
-                key1 = true;
-            } else {
-                key0 = true;
-            }
-            sendNote(true, code);
-
-            lastEventTime = event.getEventTime();
-        } else if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-            if (key1) {
-                code = 61;
-                key1 = false;
-            } else {
-                key0 = false;
-            }
-            sendNote(false, code);
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-    boolean mode0(View v, MotionEvent event) {
-        int code = 60;
-        if (event.getX(event.getActionIndex()) > (v.getWidth() / 2)) {
-            code = 61;
-        }
-
-        int a = event.getActionMasked();
-        if (a == MotionEvent.ACTION_DOWN || a == MotionEvent.ACTION_POINTER_DOWN) {
-            sendNote(true, code);
-        } else if (a == MotionEvent.ACTION_UP || a == MotionEvent.ACTION_POINTER_UP) {
-            sendNote(false, code);
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-    boolean mode2(View v, MotionEvent event) {
-
-        float x = event.getX(event.getActionIndex());
-        float width = v.getWidth();
-        int code = 60;
-        if (x > (width / 4) && x < (width / 2)) {
-            code = 61;
-        } else if (x > (width / 2) && x < ((width / 2) + (width / 4))) {
-            code = 62;
-        } else if (x > ((width / 2) + (width / 4))) {
-            code = 63;
-        }
-
-        int a = event.getActionMasked();
-        if (a == MotionEvent.ACTION_DOWN || a == MotionEvent.ACTION_POINTER_DOWN) {
-            sendNote(true, code);
-        } else if (a == MotionEvent.ACTION_UP || a == MotionEvent.ACTION_POINTER_UP) {
-            sendNote(false, code);
-        } else {
-            return false;
-        }
-        return true;
-    }
 
     void sendNote(boolean on, int code) {
         byte[] buffer = new byte[32];
@@ -177,16 +102,19 @@ public class KeypadActivity extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
-        Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.mode1);
+        Drawable drawable;
         switch (mode) {
-            case 0:
+            default:
                 drawable = AppCompatResources.getDrawable(this, R.drawable.mode0);
+                handler = new OsuStaticKeypadHandler(binding.fullscreenContent);
                 break;
             case 1:
                 drawable = AppCompatResources.getDrawable(this, R.drawable.mode1);
+                handler = new OsuDynamicKeypadHandler(binding.fullscreenContent);
                 break;
             case 2:
                 drawable = AppCompatResources.getDrawable(this, R.drawable.mode2);
+                handler = new ManiaStaticKeypadHandler(binding.fullscreenContent);
                 break;
         }
         binding.fullscreenContent.setImageDrawable(drawable);
